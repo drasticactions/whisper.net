@@ -26,8 +26,8 @@ public static class NativeLibraryLoader
     internal static LoadResult LoadNativeLibrary()
     {
         var architecture = RuntimeInformation.OSArchitecture.ToString().ToLowerInvariant();
-        
-#if MACOS
+
+#if MACOS || MACCATALYST
         return LoadNativeLibrary("osx", architecture, "dylib");
 #elif WINDOWS
         return LoadNativeLibrary("win", architecture, "dll");
