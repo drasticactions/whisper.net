@@ -1,5 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
+using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using Whisper.net.Native;
 
@@ -23,23 +25,18 @@ public static class NativeLibraryLoader
 
     internal static LoadResult LoadNativeLibrary()
     {
-        var architecture = RuntimeInformation.OSArchitecture switch
-        {
-            Architecture.X64 => "x64",
-            Architecture.X86 => "x86",
-            Architecture.Arm => "arm",
-            Architecture.Arm64 => "arm64",
-            _ => throw new PlatformNotSupportedException($"Unsupported OS platform, architecture: {RuntimeInformation.OSArchitecture}")
-        };
+        var architecture = RuntimeInformation.OSArchitecture.ToString().ToLowerInvariant();
+        
+#if MACOS
+        return LoadNativeLibrary("osx", architecture, "dylib");
+#elif WINDOWS
+        return LoadNativeLibrary("win", architecture, "dll");
+#endif
+        return LoadNativeLibraryStandard();
+    }
 
-        var (platform, extension) = Environment.OSVersion.Platform switch
-        {
-            _ when RuntimeInformation.IsOSPlatform(OSPlatform.Windows) => ("win", "dll"),
-            _ when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => ("linux", "so"),
-            _ when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => ("osx", "dylib"),
-            _ => throw new PlatformNotSupportedException($"Unsupported OS platform, architecture: {RuntimeInformation.OSArchitecture}")
-        };
-
+    internal static LoadResult LoadNativeLibrary(string platform, string architecture, string extension)
+    {
         var assemblySearchPath = new[]
         {
             AppDomain.CurrentDomain.RelativeSearchPath,
@@ -48,7 +45,7 @@ public static class NativeLibraryLoader
         }.Where(it => !string.IsNullOrEmpty(it)).FirstOrDefault();
 
         var path = Path.Combine(assemblySearchPath, "runtimes", $"{platform}-{architecture}", $"whisper.{extension}");
-
+        
         if (defaultLibraryLoader != null)
         {
             return defaultLibraryLoader.OpenLibrary(path);
@@ -69,5 +66,27 @@ public static class NativeLibraryLoader
 
         var result = libraryLoader.OpenLibrary(path);
         return result;
+    }
+
+    internal static LoadResult LoadNativeLibraryStandard()
+    {
+        var architecture = RuntimeInformation.OSArchitecture switch
+        {
+            Architecture.X64 => "x64",
+            Architecture.X86 => "x86",
+            Architecture.Arm => "arm",
+            Architecture.Arm64 => "arm64",
+            _ => throw new PlatformNotSupportedException($"Unsupported OS platform, architecture: {RuntimeInformation.OSArchitecture}")
+        };
+
+        var (platform, extension) = Environment.OSVersion.Platform switch
+        {
+            _ when RuntimeInformation.IsOSPlatform(OSPlatform.Windows) => ("win", "dll"),
+            _ when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => ("linux", "so"),
+            _ when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => ("osx", "dylib"),
+            _ => throw new PlatformNotSupportedException($"Unsupported OS platform, architecture: {RuntimeInformation.OSArchitecture}")
+        };
+
+        return LoadNativeLibrary(platform, architecture, extension);
     }
 }

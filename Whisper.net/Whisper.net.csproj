@@ -1,19 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;net7.0-macos;net7.0-windows</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>10</LangVersion>
-		<Version>1.2.2</Version>
-		<Authors>Sandro Hanea</Authors>
-		<Description>Cross-platform dotnet bindings for Whisper.</Description>
-		<PackageProjectUrl>https://github.com/sandrohanea/whisper.net</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/sandrohanea/whisper.net</RepositoryUrl>
+		<Version>1.2.2.1-preview</Version>
+		<Authors>Sandro Hanea, Drastic Actions</Authors>
+		<Description>Cross-platform dotnet bindings for Whisper, Modified by Drastic Actions.</Description>
+		<PackageProjectUrl>https://github.com/drasticactions/whisper.net</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/drasticactions/whisper.net</RepositoryUrl>
 		<RepositoryType>GIT</RepositoryType>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageId>Drastic.Whisper.Net</PackageId>
 	</PropertyGroup>
 
 	<ItemGroup>
