@@ -1,5 +1,16 @@
 BUILD_TYPE=Release
 VERSION=1.4.0
+COREML=true
+
+ifeq ($(COREML),false)
+    COREML_COMMAND := -DWHISPER_COREML=0
+	RUNTIME_OUTPUT_PATH := runtimes/
+	APPLE_OUTPUT_PATH := Whisper.net.Runtime/
+else
+    COREML_COMMAND := -DWHISPER_COREML=1
+	RUNTIME_OUTPUT_PATH := runtimes/coreml-
+	APPLE_OUTPUT_PATH := Whisper.net.Runtime/coreml-
+endif
 
 nuget:
 	mkdir -p nupkgs
@@ -13,7 +24,7 @@ clean:
 
 android: android_x86 android_x64 android_arm64-v8a
 
-apple: macos ios ios_64 maccatalyst_x64 maccatalyst_arm64 ios_simulator_x64 ios_simulator_arm64 tvos_simulator_x64 tvos_simulator_arm64 tvos lipo
+apple: clean macos ios ios_64 maccatalyst_x64 maccatalyst_arm64 ios_simulator_x64 ios_simulator_arm64 tvos_simulator_x64 tvos_simulator_arm64 tvos lipo
 
 linux: linux_x64 linux_arm64 linux_arm
 
@@ -37,87 +48,87 @@ linux_arm:
 
 macos:
 	rm -rf build/macos
-	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=MAC_UNIVERSAL -S . -B build/macos
+	cmake $(COREML_COMMAND) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=MAC_UNIVERSAL -S . -B build/macos
 	cmake --build build/macos
-	mkdir -p runtimes/macos
-	cp build/macos/whisper.cpp/libwhisper.dylib runtimes/macos/libwhisper.dylib
+	mkdir -p $(RUNTIME_OUTPUT_PATH)macos
+	cp build/macos/whisper.cpp/libwhisper.dylib $(RUNTIME_OUTPUT_PATH)macos/libwhisper.dylib
 
 ios:
 	rm -rf build/ios
-	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=OS -S . -B build/ios
+	cmake $(COREML_COMMAND) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=OS -S . -B build/ios
 	cmake --build build/ios
-	mkdir -p runtimes/ios
-	cp build/ios/whisper.cpp/libwhisper.dylib runtimes/ios/libwhisper.dylib
+	mkdir -p $(RUNTIME_OUTPUT_PATH)ios
+	cp build/ios/whisper.cpp/libwhisper.dylib $(RUNTIME_OUTPUT_PATH)ios/libwhisper.dylib
 
 ios_64:
 	rm -rf build/ios_64
-	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=OS64 -S . -B build/ios_64
+	cmake $(COREML_COMMAND) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=OS64 -S . -B build/ios_64
 	cmake --build build/ios_64
-	mkdir -p runtimes/ios_64
-	cp build/ios_64/whisper.cpp/libwhisper.dylib runtimes/ios_64/libwhisper.dylib
+	mkdir -p $(RUNTIME_OUTPUT_PATH)ios_64
+	cp build/ios_64/whisper.cpp/libwhisper.dylib $(RUNTIME_OUTPUT_PATH)ios_64/libwhisper.dylib
 
 maccatalyst_x64:
 	rm -rf build/maccatalyst_x64
-	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=MAC_CATALYST -S . -B build/maccatalyst_x64
+	cmake $(COREML_COMMAND) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=MAC_CATALYST -S . -B build/maccatalyst_x64
 	cmake --build build/maccatalyst_x64
-	mkdir -p runtimes/maccatalyst_x64
-	cp build/maccatalyst_x64/whisper.cpp/libwhisper.dylib runtimes/maccatalyst_x64/libwhisper.dylib
+	mkdir -p $(RUNTIME_OUTPUT_PATH)maccatalyst_x64
+	cp build/maccatalyst_x64/whisper.cpp/libwhisper.dylib $(RUNTIME_OUTPUT_PATH)maccatalyst_x64/libwhisper.dylib
 
 maccatalyst_arm64:
 	rm -rf build/maccatalyst_arm64
-	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=MAC_CATALYST_ARM64 -S . -B build/maccatalyst_arm64
+	cmake $(COREML_COMMAND) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=MAC_CATALYST_ARM64 -S . -B build/maccatalyst_arm64
 	cmake --build build/maccatalyst_arm64
-	mkdir -p runtimes/maccatalyst_arm64
-	cp build/maccatalyst_arm64/whisper.cpp/libwhisper.dylib runtimes/maccatalyst_arm64/libwhisper.dylib
+	mkdir -p $(RUNTIME_OUTPUT_PATH)maccatalyst_arm64
+	cp build/maccatalyst_arm64/whisper.cpp/libwhisper.dylib $(RUNTIME_OUTPUT_PATH)maccatalyst_arm64/libwhisper.dylib
 
 ios_simulator_x64:
 	rm -rf build/ios_simulator_x64
-	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=SIMULATOR64 -S . -B build/ios_simulator_x64
+	cmake $(COREML_COMMAND) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=SIMULATOR64 -S . -B build/ios_simulator_x64
 	cmake --build build/ios_simulator_x64
-	mkdir -p runtimes/ios_simulator_x64
-	cp build/ios_simulator_x64/whisper.cpp/libwhisper.dylib runtimes/ios_simulator_x64/libwhisper.dylib
+	mkdir -p $(RUNTIME_OUTPUT_PATH)ios_simulator_x64
+	cp build/ios_simulator_x64/whisper.cpp/libwhisper.dylib $(RUNTIME_OUTPUT_PATH)ios_simulator_x64/libwhisper.dylib
 
 ios_simulator_arm64:
 	rm -rf build/ios_simulator_arm64
-	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=SIMULATORARM64 -S . -B build/ios_simulator_arm64
+	cmake $(COREML_COMMAND) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=SIMULATORARM64 -S . -B build/ios_simulator_arm64
 	cmake --build build/ios_simulator_arm64
-	mkdir -p runtimes/ios_simulator_arm64
-	cp build/ios_simulator_arm64/whisper.cpp/libwhisper.dylib runtimes/ios_simulator_arm64/libwhisper.dylib
+	mkdir -p $(RUNTIME_OUTPUT_PATH)ios_simulator_arm64
+	cp build/ios_simulator_arm64/whisper.cpp/libwhisper.dylib $(RUNTIME_OUTPUT_PATH)ios_simulator_arm64/libwhisper.dylib
 
 tvos_simulator_x64:
 	rm -rf build/tvos_simulator_x64
-	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=SIMULATOR_TVOS -S . -B build/tvos_simulator_x64
+	cmake $(COREML_COMMAND) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=SIMULATOR_TVOS -S . -B build/tvos_simulator_x64
 	cmake --build build/tvos_simulator_x64
-	mkdir -p runtimes/tvos_simulator_x64
-	cp build/tvos_simulator_x64/whisper.cpp/libwhisper.dylib runtimes/tvos_simulator_x64/libwhisper.dylib
+	mkdir -p $(RUNTIME_OUTPUT_PATH)tvos_simulator_x64
+	cp build/tvos_simulator_x64/whisper.cpp/libwhisper.dylib $(RUNTIME_OUTPUT_PATH)tvos_simulator_x64/libwhisper.dylib
 
 tvos_simulator_arm64:
 	rm -rf build/tvos_simulator_arm64
-	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=SIMULATOR_TVOSARM64 -S . -B build/tvos_simulator_arm64
+	cmake $(COREML_COMMAND) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=SIMULATOR_TVOSARM64 -S . -B build/tvos_simulator_arm64
 	cmake --build build/tvos_simulator_arm64
-	mkdir -p runtimes/tvos_simulator_arm64
-	cp build/tvos_simulator_arm64/whisper.cpp/libwhisper.dylib runtimes/tvos_simulator_arm64/libwhisper.dylib
+	mkdir -p $(RUNTIME_OUTPUT_PATH)tvos_simulator_arm64
+	cp build/tvos_simulator_arm64/whisper.cpp/libwhisper.dylib $(RUNTIME_OUTPUT_PATH)tvos_simulator_arm64/libwhisper.dylib
 
 tvos:
 	rm -rf build/tvos
-	cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=TVOS -S . -B build/tvos
+	cmake $(COREML_COMMAND) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=TVOS -S . -B build/tvos
 	cmake --build build/tvos
-	mkdir -p runtimes/tvos
-	cp build/tvos/whisper.cpp/libwhisper.dylib runtimes/tvos/libwhisper.dylib
+	mkdir -p $(RUNTIME_OUTPUT_PATH)tvos
+	cp build/tvos/whisper.cpp/libwhisper.dylib $(RUNTIME_OUTPUT_PATH)tvos/libwhisper.dylib
 
 lipo:
-	mkdir -p Whisper.net.Runtime/tvos-simulator
-	lipo -create runtimes/tvos_simulator_arm64/libwhisper.dylib -create runtimes/tvos_simulator_x64/libwhisper.dylib -output Whisper.net.Runtime/tvos-simulator/libwhisper.dylib
-	mkdir -p Whisper.net.Runtime/ios-simulator
-	lipo -create runtimes/ios_simulator_arm64/libwhisper.dylib -create runtimes/ios_simulator_x64/libwhisper.dylib -output Whisper.net.Runtime/ios-simulator/libwhisper.dylib
-	mkdir -p Whisper.net.Runtime/ios-device
-	cp runtimes/ios/libwhisper.dylib Whisper.net.Runtime/ios-device/libwhisper.dylib
-	mkdir -p Whisper.net.Runtime/maccatalyst
-	lipo -create runtimes/maccatalyst_x64/libwhisper.dylib -create runtimes/maccatalyst_arm64/libwhisper.dylib -output Whisper.net.Runtime/maccatalyst/libwhisper.dylib
-	mkdir -p Whisper.net.Runtime/tvos-device
-	cp runtimes/tvos/libwhisper.dylib Whisper.net.Runtime/tvos-device/libwhisper.dylib
-	mkdir -p Whisper.net.Runtime/macos
-	cp runtimes/macos/libwhisper.dylib Whisper.net.Runtime/macos/libwhisper.dylib
+	mkdir -p $(APPLE_OUTPUT_PATH)tvos-simulator
+	lipo -create $(RUNTIME_OUTPUT_PATH)tvos_simulator_arm64/libwhisper.dylib -create $(RUNTIME_OUTPUT_PATH)tvos_simulator_x64/libwhisper.dylib -output $(APPLE_OUTPUT_PATH)tvos-simulator/libwhisper.dylib
+	mkdir -p $(APPLE_OUTPUT_PATH)ios-simulator
+	lipo -create $(RUNTIME_OUTPUT_PATH)ios_simulator_arm64/libwhisper.dylib -create $(RUNTIME_OUTPUT_PATH)ios_simulator_x64/libwhisper.dylib -output $(APPLE_OUTPUT_PATH)ios-simulator/libwhisper.dylib
+	mkdir -p $(APPLE_OUTPUT_PATH)ios-device
+	cp $(RUNTIME_OUTPUT_PATH)ios/libwhisper.dylib $(APPLE_OUTPUT_PATH)ios-device/libwhisper.dylib
+	mkdir -p $(APPLE_OUTPUT_PATH)maccatalyst
+	lipo -create $(RUNTIME_OUTPUT_PATH)maccatalyst_x64/libwhisper.dylib -create $(RUNTIME_OUTPUT_PATH)maccatalyst_arm64/libwhisper.dylib -output $(APPLE_OUTPUT_PATH)maccatalyst/libwhisper.dylib
+	mkdir -p $(APPLE_OUTPUT_PATH)tvos-device
+	cp $(RUNTIME_OUTPUT_PATH)tvos/libwhisper.dylib $(APPLE_OUTPUT_PATH)tvos-device/libwhisper.dylib
+	mkdir -p $(APPLE_OUTPUT_PATH)macos
+	cp $(RUNTIME_OUTPUT_PATH)macos/libwhisper.dylib $(APPLE_OUTPUT_PATH)macos/libwhisper.dylib
 
 android_arm64-v8a:
 	rm -rf build/android-arm64-v8a
