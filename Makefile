@@ -53,6 +53,14 @@ macos:
 	mkdir -p runtimes/macos
 	cp build/macos/whisper.cpp/libwhisper.dylib runtimes/macos/libwhisper.dylib
 
+macos_coreml:
+	rm -rf build/macos-coreml
+	cmake $(CMAKE_PARAMETERS) -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DWHISPER_COREML=ON -S . -B build/macos-coreml
+	cmake --build build/macos-coreml
+	mkdir -p runtimes/macos-coreml
+	cp build/macos-coreml/whisper.cpp/libwhisper.coreml.dylib runtimes/macos-coreml/libwhisper.coreml.dylib
+	cp build/macos-coreml/whisper.cpp/libwhisper.dylib runtimes/macos-coreml/libwhisper.dylib
+
 ios:
 	rm -rf build/ios
 	cmake $(CMAKE_PARAMETERS) -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=OS -S . -B build/ios
@@ -129,6 +137,9 @@ lipo:
 	cp runtimes/tvos/libwhisper.dylib Whisper.net.Runtime/tvos-device/libwhisper.dylib
 	mkdir -p Whisper.net.Runtime/macos
 	cp runtimes/macos/libwhisper.dylib Whisper.net.Runtime/macos/libwhisper.dylib
+	mkdir -p Whisper.net.Runtime/macos-coreml
+	cp runtimes/macos-coreml/libwhisper.dylib Whisper.net.Runtime/macos-coreml/libwhisper.dylib
+	cp runtimes/macos-coreml/libwhisper.coreml.dylib Whisper.net.Runtime/macos-coreml/libwhisper.coreml.dylib
 
 android_arm64-v8a:
 	rm -rf build/android-arm64-v8a
