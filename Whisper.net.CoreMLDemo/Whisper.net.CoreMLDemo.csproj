@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<DefineConstants>COREML_ENABLE</DefineConstants>
+	</PropertyGroup>
+	
+	<ItemGroup>
+	  <PackageReference Include="CommandLineParser" Version="2.9.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Whisper.net\Whisper.net.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="kennedy.wav">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="romana.wav">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Visible="false" Include="../Whisper.net.Runtime/macos-coreml/libwhisper.dylib">
+			<Pack>true</Pack>
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>runtimes/osx-x64/whisper.dylib</TargetPath>
+		</None>
+		<None Visible="false" Include="../Whisper.net.Runtime/macos-coreml/libwhisper.dylib">
+			<Pack>true</Pack>
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>runtimes/osx-arm64/whisper.dylib</TargetPath>
+		</None>
+		<None Visible="false" Include="../Whisper.net.Runtime/macos-coreml/libwhisper.coreml.dylib">
+			<Pack>true</Pack>
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>runtimes/osx-x64/whisper.dylib</TargetPath>
+		</None>
+		<None Visible="false" Include="../Whisper.net.Runtime/macos-coreml/libwhisper.coreml.dylib">
+			<Pack>true</Pack>
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>runtimes/osx-arm64/whisper.coreml.dylib</TargetPath>
+		</None>
+		<None Visible="false" Include="../Whisper.net.Runtime/macos-coreml/libwhisper.coreml.dylib">
+			<Pack>true</Pack>
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>runtimes/osx-x64/whisper.coreml.dylib</TargetPath>
+		</None>
+	</ItemGroup>
+</Project>

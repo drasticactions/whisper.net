@@ -1,5 +1,8 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
+
 #if !IOS && !MACCATALYST && !TVOS && !ANDROID
+using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using Whisper.net.Native;
 #endif
@@ -59,17 +62,7 @@ public static class NativeLibraryLoader
 
         if (string.IsNullOrEmpty(path))
         {
-            var assemblySearchPath = new[]
-            {
-                AppDomain.CurrentDomain.RelativeSearchPath,
-                Path.GetDirectoryName(typeof(NativeMethods).Assembly.Location),
-                Path.GetDirectoryName(Environment.GetCommandLineArgs()[0])
-            }.Where(it => !string.IsNullOrEmpty(it)).FirstOrDefault();
-
-            path = string.IsNullOrEmpty(assemblySearchPath)
-                ? Path.Combine("runtimes", $"{platform}-{architecture}", $"whisper.{extension}")
-                : Path.Combine(assemblySearchPath, "runtimes", $"{platform}-{architecture}", $"whisper.{extension}");
-
+            path = GeneratePath("whisper", platform, architecture, extension);
         }
 
         if (defaultLibraryLoader != null)
@@ -93,7 +86,36 @@ public static class NativeLibraryLoader
         };
 
         var result = libraryLoader.OpenLibrary(path);
+
+        if (libraryLoader is MacOsLibraryLoader macOsLibrary)
+        {
+            var coreml = GeneratePath("whisper.coreml", platform, architecture, extension);
+
+            if (File.Exists(coreml))
+            {
+                var coremlResult = macOsLibrary.OpenLibrary(coreml);
+                if (!coremlResult.IsSuccess)
+                {
+
+                }
+            }
+        }
+
         return result;
 #endif
+    }
+
+    internal static string GeneratePath(string filename, string platform, string architecture, string extension)
+    {
+        var assemblySearchPath = new[]
+            {
+                AppDomain.CurrentDomain.RelativeSearchPath,
+                Path.GetDirectoryName(typeof(NativeLibraryLoader).Assembly.Location),
+                Path.GetDirectoryName(Environment.GetCommandLineArgs()[0])
+            }.Where(it => !string.IsNullOrEmpty(it)).FirstOrDefault();
+
+        return string.IsNullOrEmpty(assemblySearchPath)
+            ? Path.Combine("runtimes", $"{platform}-{architecture}", $"{filename}.{extension}")
+            : Path.Combine(assemblySearchPath, "runtimes", $"{platform}-{architecture}", $"{filename}.{extension}");
     }
 }
